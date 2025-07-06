@@ -13,6 +13,7 @@ import {
 import { COLORS, SPACING, BORDER_RADIUS } from '../constants';
 import { AlcoholCategory, AlcoholRecord } from '../types';
 import { StorageService } from '../services/storage';
+import { DatePicker } from '../components/DatePicker';
 
 interface EditRecordScreenProps {
   record: AlcoholRecord;
@@ -100,16 +101,10 @@ export const EditRecordScreen: React.FC<EditRecordScreenProps> = ({
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.section}>
-          <Text style={styles.label}>日付</Text>
-          <TouchableOpacity style={styles.dateButton}>
-            <Text style={styles.dateText}>
-              {date.toLocaleDateString('ja-JP', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })}
-            </Text>
-          </TouchableOpacity>
+          <DatePicker
+            selectedDate={date}
+            onDateChange={setDate}
+          />
         </View>
 
         <View style={styles.section}>
