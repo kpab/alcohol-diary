@@ -1,4 +1,3 @@
-import { Platform } from 'react-native';
 import { AlcoholRecord, UserSettings } from '../types';
 
 const STORAGE_KEYS = {
@@ -6,16 +5,10 @@ const STORAGE_KEYS = {
   SETTINGS: 'user_settings'
 };
 
-export class StorageService {
+export class StorageServiceWeb {
   static async getAllRecords(): Promise<AlcoholRecord[]> {
     try {
-      let data: string | null = null;
-      if (Platform.OS === 'web') {
-        data = localStorage.getItem(STORAGE_KEYS.RECORDS);
-      } else {
-        // Mobile implementation - will be added later
-        return [];
-      }
+      const data = localStorage.getItem(STORAGE_KEYS.RECORDS);
       if (!data) return [];
       return JSON.parse(data).map((record: any) => ({
         ...record,
@@ -40,12 +33,7 @@ export class StorageService {
         records.push(record);
       }
       
-      const data = JSON.stringify(records);
-      if (Platform.OS === 'web') {
-        localStorage.setItem(STORAGE_KEYS.RECORDS, data);
-      } else {
-        // Mobile implementation - will be added later
-      }
+      localStorage.setItem(STORAGE_KEYS.RECORDS, JSON.stringify(records));
     } catch (error) {
       console.error('Error saving record:', error);
       throw error;
@@ -56,12 +44,7 @@ export class StorageService {
     try {
       const records = await this.getAllRecords();
       const filteredRecords = records.filter(r => r.id !== id);
-      const data = JSON.stringify(filteredRecords);
-      if (Platform.OS === 'web') {
-        localStorage.setItem(STORAGE_KEYS.RECORDS, data);
-      } else {
-        // Mobile implementation - will be added later
-      }
+      localStorage.setItem(STORAGE_KEYS.RECORDS, JSON.stringify(filteredRecords));
     } catch (error) {
       console.error('Error deleting record:', error);
       throw error;
@@ -70,13 +53,7 @@ export class StorageService {
 
   static async getSettings(): Promise<UserSettings> {
     try {
-      let data: string | null = null;
-      if (Platform.OS === 'web') {
-        data = localStorage.getItem(STORAGE_KEYS.SETTINGS);
-      } else {
-        // Mobile implementation - will be added later
-        data = null;
-      }
+      const data = localStorage.getItem(STORAGE_KEYS.SETTINGS);
       if (!data) {
         return { isPremium: false };
       }
@@ -93,12 +70,7 @@ export class StorageService {
 
   static async saveSettings(settings: UserSettings): Promise<void> {
     try {
-      const data = JSON.stringify(settings);
-      if (Platform.OS === 'web') {
-        localStorage.setItem(STORAGE_KEYS.SETTINGS, data);
-      } else {
-        // Mobile implementation - will be added later
-      }
+      localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
     } catch (error) {
       console.error('Error saving settings:', error);
       throw error;
