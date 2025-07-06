@@ -12,13 +12,11 @@ import { AlcoholRecord } from '../types';
 import { StorageService } from '../services/storage';
 import { AddRecordScreen } from './AddRecordScreen';
 import { EditRecordScreen } from './EditRecordScreen';
-import { StatisticsScreen } from './StatisticsScreen';
 
-export const HomeScreen: React.FC = () => {
+export const HomeTabScreen: React.FC = () => {
   const [records, setRecords] = useState<AlcoholRecord[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showStatsModal, setShowStatsModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<AlcoholRecord | null>(null);
 
   useEffect(() => {
@@ -83,12 +81,6 @@ export const HomeScreen: React.FC = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>酒日記</Text>
-        <TouchableOpacity 
-          style={styles.statsButton}
-          onPress={() => setShowStatsModal(true)}
-        >
-          <Text style={styles.statsButtonText}>統計</Text>
-        </TouchableOpacity>
       </View>
 
       <FlatList
@@ -133,14 +125,6 @@ export const HomeScreen: React.FC = () => {
           />
         )}
       </Modal>
-
-      <Modal
-        visible={showStatsModal}
-        animationType="slide"
-        presentationStyle="fullScreen"
-      >
-        <StatisticsScreen onClose={() => setShowStatsModal(false)} />
-      </Modal>
     </View>
   );
 };
@@ -155,25 +139,11 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: SPACING.md,
     paddingHorizontal: SPACING.md,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: COLORS.background,
-  },
-  statsButton: {
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: BORDER_RADIUS.full,
-  },
-  statsButtonText: {
-    color: COLORS.background,
-    fontSize: 14,
-    fontWeight: 'bold',
   },
   listContent: {
     flexGrow: 1,
@@ -242,7 +212,7 @@ const styles = StyleSheet.create({
   fab: {
     position: 'absolute',
     right: SPACING.md,
-    bottom: SPACING.xl,
+    bottom: 100,
     width: 56,
     height: 56,
     borderRadius: 28,
