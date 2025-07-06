@@ -129,9 +129,7 @@ export const EditRecordScreen: React.FC<EditRecordScreenProps> = ({
           <Text style={styles.headerButton}>キャンセル</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>記録を編集</Text>
-        <TouchableOpacity onPress={handleSave}>
-          <Text style={[styles.headerButton, styles.saveButton]}>保存</Text>
-        </TouchableOpacity>
+        <View />
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -241,14 +239,18 @@ export const EditRecordScreen: React.FC<EditRecordScreenProps> = ({
           <ErrorText error={errors.memo} />
         </View>
 
-        <View style={styles.deleteSection}>
-          <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-            <Text style={styles.deleteButtonText}>記録を削除</Text>
-          </TouchableOpacity>
-        </View>
 
         <View style={styles.bottomSpace} />
       </ScrollView>
+      
+      <View style={styles.bottomActions}>
+        <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+          <Text style={styles.deleteButtonText}>削除</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <Text style={styles.saveButtonText}>保存</Text>
+        </TouchableOpacity>
+      </View>
     </KeyboardAvoidingView>
   );
 };
@@ -277,9 +279,43 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: COLORS.textSecondary,
   },
+  bottomActions: {
+    flexDirection: 'row',
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.lg,
+    paddingBottom: Platform.OS === 'ios' ? SPACING.xl : SPACING.lg,
+    backgroundColor: COLORS.surface,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+    gap: SPACING.md,
+  },
+  deleteButton: {
+    flex: 1,
+    backgroundColor: '#DC3545',
+    paddingVertical: SPACING.md,
+    borderRadius: BORDER_RADIUS.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 48,
+  },
+  deleteButtonText: {
+    color: COLORS.surface,
+    fontSize: 16,
+    fontWeight: '600',
+  },
   saveButton: {
-    color: COLORS.primary,
-    fontWeight: 'bold',
+    flex: 1,
+    backgroundColor: COLORS.primary,
+    paddingVertical: SPACING.md,
+    borderRadius: BORDER_RADIUS.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 48,
+  },
+  saveButtonText: {
+    color: COLORS.surface,
+    fontSize: 16,
+    fontWeight: '600',
   },
   content: {
     flex: 1,
@@ -345,22 +381,6 @@ const styles = StyleSheet.create({
   },
   starActive: {
     color: COLORS.rating,
-  },
-  deleteSection: {
-    padding: SPACING.md,
-    paddingTop: SPACING.xl,
-  },
-  deleteButton: {
-    backgroundColor: COLORS.error,
-    paddingVertical: SPACING.md,
-    paddingHorizontal: SPACING.md,
-    borderRadius: BORDER_RADIUS.md,
-    alignItems: 'center',
-  },
-  deleteButtonText: {
-    color: COLORS.background,
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   bottomSpace: {
     height: 100,

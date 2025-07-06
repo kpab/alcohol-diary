@@ -10,7 +10,7 @@ import {
   Platform,
   KeyboardAvoidingView,
 } from 'react-native';
-import { COLORS, SPACING, BORDER_RADIUS } from '../constants';
+import { COLORS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants';
 import { AlcoholCategory, AlcoholRecord } from '../types';
 import { StorageService } from '../services/storage';
 import { DatePicker } from '../components/DatePicker';
@@ -88,9 +88,7 @@ export const AddRecordScreen: React.FC<AddRecordScreenProps> = ({ onClose, onSav
           <Text style={styles.headerButton}>キャンセル</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>記録を追加</Text>
-        <TouchableOpacity onPress={handleSave}>
-          <Text style={[styles.headerButton, styles.saveButton]}>保存</Text>
-        </TouchableOpacity>
+        <View />
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -202,6 +200,15 @@ export const AddRecordScreen: React.FC<AddRecordScreenProps> = ({ onClose, onSav
 
         <View style={styles.bottomSpace} />
       </ScrollView>
+      
+      <View style={styles.bottomActions}>
+        <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+          <Text style={styles.cancelButtonText}>キャンセル</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <Text style={styles.saveButtonText}>保存</Text>
+        </TouchableOpacity>
+      </View>
     </KeyboardAvoidingView>
   );
 };
@@ -215,37 +222,78 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: SPACING.md,
-    paddingTop: Platform.OS === 'ios' ? 60 : 20,
-    paddingBottom: SPACING.md,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    paddingHorizontal: SPACING.lg,
+    paddingTop: Platform.OS === 'ios' ? 60 : 24,
+    paddingBottom: SPACING.lg,
+    backgroundColor: COLORS.surface,
+    ...SHADOWS.subtle,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 19,
+    fontWeight: '700',
     color: COLORS.text,
+    letterSpacing: -0.3,
   },
   headerButton: {
     fontSize: 16,
     color: COLORS.textSecondary,
+    fontWeight: '500',
+  },
+  bottomActions: {
+    flexDirection: 'row',
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.lg,
+    paddingBottom: Platform.OS === 'ios' ? SPACING.xl : SPACING.lg,
+    backgroundColor: COLORS.surface,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+    gap: SPACING.md,
+  },
+  cancelButton: {
+    flex: 1,
+    backgroundColor: COLORS.border,
+    paddingVertical: SPACING.md,
+    borderRadius: BORDER_RADIUS.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 48,
+  },
+  cancelButtonText: {
+    color: COLORS.secondary,
+    fontSize: 16,
+    fontWeight: '600',
   },
   saveButton: {
-    color: COLORS.primary,
-    fontWeight: 'bold',
+    flex: 1,
+    backgroundColor: COLORS.primary,
+    paddingVertical: SPACING.md,
+    borderRadius: BORDER_RADIUS.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 48,
+  },
+  saveButtonText: {
+    color: COLORS.surface,
+    fontSize: 16,
+    fontWeight: '600',
   },
   content: {
     flex: 1,
   },
   section: {
-    padding: SPACING.md,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.xl,
+    backgroundColor: COLORS.surface,
+    marginHorizontal: SPACING.md,
+    marginTop: SPACING.sm,
+    borderRadius: BORDER_RADIUS.lg,
+    ...SHADOWS.card,
   },
   label: {
-    fontSize: 14,
-    color: COLORS.textSecondary,
-    marginBottom: SPACING.sm,
+    fontSize: 15,
+    color: COLORS.text,
+    marginBottom: SPACING.md,
+    fontWeight: '600',
   },
   input: {
     fontSize: 16,

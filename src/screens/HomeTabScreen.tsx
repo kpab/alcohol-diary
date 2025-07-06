@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Modal,
 } from 'react-native';
-import { COLORS, SPACING, BORDER_RADIUS } from '../constants';
+import { COLORS, SPACING, BORDER_RADIUS, SHADOWS, FONTS } from '../constants';
 import { AlcoholRecord, AlcoholCategory } from '../types';
 import { StorageService } from '../services/storage';
 import { AddRecordScreen } from './AddRecordScreen';
@@ -306,9 +306,10 @@ const styles = StyleSheet.create({
   },
   recordCard: {
     backgroundColor: COLORS.surface,
-    padding: SPACING.md,
-    marginBottom: SPACING.sm,
-    borderRadius: BORDER_RADIUS.md,
+    padding: SPACING.lg,
+    marginBottom: SPACING.md,
+    borderRadius: BORDER_RADIUS.lg,
+    ...SHADOWS.card,
   },
   recordHeader: {
     flexDirection: 'row',
@@ -317,24 +318,27 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xs,
   },
   recordDate: {
-    fontSize: 14,
+    fontSize: 13,
     color: COLORS.textSecondary,
+    fontWeight: '500',
   },
   categoryBadge: {
-    backgroundColor: COLORS.primary,
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: 2,
-    borderRadius: BORDER_RADIUS.sm,
+    backgroundColor: COLORS.border,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: 4,
+    borderRadius: BORDER_RADIUS.full,
   },
   categoryText: {
-    fontSize: 12,
-    color: COLORS.background,
+    fontSize: 11,
+    color: COLORS.secondary,
+    fontWeight: '600',
   },
   recordName: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 17,
+    fontWeight: '700',
     color: COLORS.text,
-    marginBottom: SPACING.xs,
+    marginBottom: SPACING.sm,
+    letterSpacing: -0.3,
   },
   recordFooter: {
     flexDirection: 'row',
@@ -346,8 +350,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   store: {
-    fontSize: 14,
+    fontSize: 13,
     color: COLORS.textSecondary,
+    fontWeight: '400',
   },
   emptyContainer: {
     flex: 1,
@@ -366,26 +371,20 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    right: SPACING.md,
-    bottom: 100,
+    right: SPACING.lg,
+    bottom: 120,
     width: 56,
     height: 56,
     borderRadius: 28,
     backgroundColor: COLORS.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    ...SHADOWS.elevated,
   },
   fabText: {
-    fontSize: 24,
-    color: COLORS.background,
+    fontSize: 22,
+    color: COLORS.surface,
+    fontWeight: '600',
   },
   viewModeContainer: {
     paddingHorizontal: SPACING.md,
