@@ -11,10 +11,13 @@ import { COLORS, SPACING, BORDER_RADIUS } from '../constants';
 import { AlcoholRecord } from '../types';
 import { StorageService } from '../services/storage';
 import { AddRecordScreen } from './AddRecordScreen';
+import { EditRecordScreen } from './EditRecordScreen';
 
 export const HomeScreen: React.FC = () => {
   const [records, setRecords] = useState<AlcoholRecord[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState<AlcoholRecord | null>(null);
 
   useEffect(() => {
     loadRecords();
@@ -34,8 +37,25 @@ export const HomeScreen: React.FC = () => {
     loadRecords();
   };
 
+  const handleEditRecord = (record: AlcoholRecord) => {
+    setSelectedRecord(record);
+    setShowEditModal(true);
+  };
+
+  const handleUpdateRecord = () => {
+    setShowEditModal(false);
+    setSelectedRecord(null);
+    loadRecords();
+  };
+
+  const handleDeleteRecord = () => {
+    setShowEditModal(false);
+    setSelectedRecord(null);
+    loadRecords();
+  };
+
   const renderRecord = ({ item }: { item: AlcoholRecord }) => (
-    <TouchableOpacity style={styles.recordCard}>
+    <TouchableOpacity style={styles.recordCard} onPress={() => handleEditRecord(item)}>
       <View style={styles.recordHeader}>
         <Text style={styles.recordDate}>
           {item.date.toLocaleDateString('ja-JP', { 
@@ -89,6 +109,21 @@ export const HomeScreen: React.FC = () => {
           onClose={() => setShowAddModal(false)}
           onSave={handleSaveRecord}
         />
+      </Modal>
+
+      <Modal
+        visible={showEditModal}
+        animationType="slide"
+        presentationStyle="fullScreen"
+      >
+        {selectedRecord && (
+          <EditRecordScreen
+            record={selectedRecord}
+            onClose={() => setShowEditModal(false)}
+            onSave={handleUpdateRecord}
+            onDelete={handleDeleteRecord}
+          />
+        )}
       </Modal>
     </View>
   );
