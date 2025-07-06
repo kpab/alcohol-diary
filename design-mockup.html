@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>酒日記 モノクロデザインモックアップ</title>
+    <style>
+        body { margin: 0; padding: 20px; background: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        .mockup { max-width: 375px; margin: 0 auto; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div class="mockup">
+        <svg width="375" height="667" viewBox="0 0 375 667" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background -->
+            <rect width="375" height="667" fill="#FAFAFA"/>
+            
+            <!-- Header -->
+            <rect width="375" height="80" fill="#000000"/>
+            <text x="20" y="50" fill="#FFFFFF" font-size="24" font-weight="bold">酒日記</text>
+            
+            <!-- Tab Bar -->
+            <rect y="80" width="375" height="50" fill="#FFFFFF"/>
+            <line x1="125" y1="80" x2="125" y2="130" stroke="#E0E0E0"/>
+            <line x1="250" y1="80" x2="250" y2="130" stroke="#E0E0E0"/>
+            
+            <!-- Tab Icons -->
+            <circle cx="62" cy="105" r="3" fill="#000000"/>
+            <text x="45" y="120" fill="#000000" font-size="12">記録</text>
+            
+            <circle cx="187" cy="105" r="3" fill="#9E9E9E"/>
+            <text x="170" y="120" fill="#9E9E9E" font-size="12">統計</text>
+            
+            <circle cx="312" cy="105" r="3" fill="#9E9E9E"/>
+            <text x="295" y="120" fill="#9E9E9E" font-size="12">設定</text>
+            
+            <!-- Search Bar -->
+            <rect x="20" y="150" width="335" height="40" rx="4" fill="#FFFFFF" stroke="#E0E0E0"/>
+            <text x="30" y="173" fill="#9E9E9E" font-size="14">お酒の名前で検索...</text>
+            
+            <!-- Category Filters -->
+            <rect x="20" y="210" width="60" height="30" rx="15" fill="#000000"/>
+            <text x="35" y="228" fill="#FFFFFF" font-size="12">ビール</text>
+            
+            <rect x="90" y="210" width="60" height="30" rx="15" fill="#FFFFFF" stroke="#E0E0E0"/>
+            <text x="105" y="228" fill="#000000" font-size="12">日本酒</text>
+            
+            <rect x="160" y="210" width="70" height="30" rx="15" fill="#FFFFFF" stroke="#E0E0E0"/>
+            <text x="170" y="228" fill="#000000" font-size="12">赤ワイン</text>
+            
+            <!-- Record Card 1 -->
+            <rect x="20" y="260" width="335" height="90" rx="8" fill="#FFFFFF" stroke="#F0F0F0"/>
+            <text x="30" y="280" fill="#9E9E9E" font-size="12">7/6</text>
+            <rect x="280" y="270" width="60" height="20" rx="10" fill="#FFE0E0"/>
+            <text x="295" y="282" fill="#FF5252" font-size="10">カクテル</text>
+            
+            <text x="30" y="300" fill="#212121" font-size="16" font-weight="bold">ジントニック</text>
+            
+            <!-- Stars -->
+            <text x="30" y="320" fill="#FFB000" font-size="16">★★</text><text x="62" y="320" fill="#E0E0E0" font-size="16">☆☆☆</text>
+            
+            <text x="30" y="335" fill="#9E9E9E" font-size="12">セブンイレブン</text>
+            
+            <!-- Record Card 2 -->
+            <rect x="20" y="360" width="335" height="90" rx="8" fill="#FFFFFF" stroke="#F0F0F0"/>
+            <text x="30" y="380" fill="#9E9E9E" font-size="12">7/4</text>
+            <rect x="290" y="370" width="50" height="20" rx="10" fill="#F5F5F5"/>
+            <text x="305" y="382" fill="#666666" font-size="10">ビール</text>
+            
+            <text x="30" y="400" fill="#212121" font-size="16" font-weight="bold">サッポロ</text>
+            
+            <!-- Stars -->
+            <text x="30" y="420" fill="#FFB000" font-size="16">★★★★</text><text x="78" y="420" fill="#E0E0E0" font-size="16">☆</text>
+            
+            <!-- Record Card 3 -->
+            <rect x="20" y="460" width="335" height="90" rx="8" fill="#FFFFFF" stroke="#F0F0F0"/>
+            <text x="30" y="480" fill="#9E9E9E" font-size="12">6/11</text>
+            <rect x="280" y="470" width="60" height="20" rx="10" fill="#F5F5F5"/>
+            <text x="295" y="482" fill="#666666" font-size="10">日本酒</text>
+            
+            <text x="30" y="500" fill="#212121" font-size="16" font-weight="bold">アサヒスーパードライ</text>
+            
+            <!-- Stars -->
+            <text x="30" y="520" fill="#FFB000" font-size="16">★★★★★</text>
+            
+            <!-- FAB -->
+            <circle cx="325" cy="580" r="28" fill="#000000"/>
+            <text x="318" y="587" fill="#FFFFFF" font-size="24" font-weight="bold">+</text>
+            
+            <!-- Ad Banner Area -->
+            <rect x="20" y="620" width="335" height="40" rx="4" fill="#F5F5F5" stroke="#E0E0E0" stroke-dasharray="2,2"/>
+            <text x="140" y="643" fill="#9E9E9E" font-size="12">広告エリア</text>
+        </svg>
+    </div>
+    
+    <h2>改良版デザインのポイント</h2>
+    <ul>
+        <li><strong>評価星:</strong> アクティブ #FFB000 (ゴールド) / 非アクティブ #E0E0E0 (ライトグレー)</li>
+        <li><strong>カテゴリタグ:</strong> モノクロ統一 (#F5F5F5背景 + #666666文字)</li>
+        <li><strong>コントラスト:</strong> 黒・白・グレーで洗練された印象</li>
+        <li><strong>アクセント:</strong> ゴールドの星のみで上品な差し色</li>
+        <li><strong>ミニマル:</strong> 余計な色を排除してスタイリッシュに</li>
+    </ul>
+    
+    <h3>さらなるこだわりオプション</h3>
+    <ul>
+        <li>📐 <strong>カードシャドウ:</strong> より繊細な影で立体感</li>
+        <li>🔤 <strong>フォント:</strong> SF Pro Display風のモダンフォント</li>
+        <li>📱 <strong>スペーシング:</strong> より洗練された余白設計</li>
+        <li>🎯 <strong>アイコン:</strong> ミニマルなラインアイコン</li>
+    </ul>
+</body>
+</html>
