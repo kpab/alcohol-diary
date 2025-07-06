@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AlcoholRecord, UserSettings } from '../types';
 
 const STORAGE_KEYS = {
@@ -13,8 +14,7 @@ export class StorageService {
       if (Platform.OS === 'web') {
         data = localStorage.getItem(STORAGE_KEYS.RECORDS);
       } else {
-        // Mobile implementation - will be added later
-        return [];
+        data = await AsyncStorage.getItem(STORAGE_KEYS.RECORDS);
       }
       if (!data) return [];
       return JSON.parse(data).map((record: any) => ({
@@ -44,7 +44,7 @@ export class StorageService {
       if (Platform.OS === 'web') {
         localStorage.setItem(STORAGE_KEYS.RECORDS, data);
       } else {
-        // Mobile implementation - will be added later
+        await AsyncStorage.setItem(STORAGE_KEYS.RECORDS, data);
       }
     } catch (error) {
       console.error('Error saving record:', error);
@@ -60,7 +60,7 @@ export class StorageService {
       if (Platform.OS === 'web') {
         localStorage.setItem(STORAGE_KEYS.RECORDS, data);
       } else {
-        // Mobile implementation - will be added later
+        await AsyncStorage.setItem(STORAGE_KEYS.RECORDS, data);
       }
     } catch (error) {
       console.error('Error deleting record:', error);
@@ -74,8 +74,7 @@ export class StorageService {
       if (Platform.OS === 'web') {
         data = localStorage.getItem(STORAGE_KEYS.SETTINGS);
       } else {
-        // Mobile implementation - will be added later
-        data = null;
+        data = await AsyncStorage.getItem(STORAGE_KEYS.SETTINGS);
       }
       if (!data) {
         return { isPremium: false };
@@ -97,7 +96,7 @@ export class StorageService {
       if (Platform.OS === 'web') {
         localStorage.setItem(STORAGE_KEYS.SETTINGS, data);
       } else {
-        // Mobile implementation - will be added later
+        await AsyncStorage.setItem(STORAGE_KEYS.SETTINGS, data);
       }
     } catch (error) {
       console.error('Error saving settings:', error);
@@ -127,6 +126,49 @@ export class StorageService {
     } catch (error) {
       console.error('Error getting premium status:', error);
       return false;
+    }
+  }
+
+  // デバッグ用: ストレージ内容を確認
+  static async debugStorage(): Promise<void> {
+    try {
+      console.log('=== Storage Debug Info ===');
+      
+      let recordsData: string | null = null;
+      let settingsData: string | null = null;
+      
+      if (Platform.OS === 'web') {
+        recordsData = localStorage.getItem(STORAGE_KEYS.RECORDS);
+        settingsData = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+        console.log('Platform: Web (localStorage)');
+      } else {
+        recordsData = await AsyncStorage.getItem(STORAGE_KEYS.RECORDS);
+        settingsData = await AsyncStorage.getItem(STORAGE_KEYS.SETTINGS);
+        console.log('Platform: Mobile (AsyncStorage)');
+      }
+      
+      console.log('Records data:', recordsData ? JSON.parse(recordsData).length + ' records' : 'No records');
+      console.log('Settings data:', settingsData ? JSON.parse(settingsData) : 'No settings');
+      console.log('==========================');
+    } catch (error) {
+      console.error('Error debugging storage:', error);
+    }
+  }
+
+  // ストレージクリア（開発用）
+  static async clearStorage(): Promise<void> {
+    try {
+      if (Platform.OS === 'web') {
+        localStorage.removeItem(STORAGE_KEYS.RECORDS);
+        localStorage.removeItem(STORAGE_KEYS.SETTINGS);
+      } else {
+        await AsyncStorage.removeItem(STORAGE_KEYS.RECORDS);
+        await AsyncStorage.removeItem(STORAGE_KEYS.SETTINGS);
+      }
+      console.log('Storage cleared successfully');
+    } catch (error) {
+      console.error('Error clearing storage:', error);
+      throw error;
     }
   }
 }
