@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -8,16 +8,21 @@ import {
   Modal,
 } from 'react-native';
 import { COLORS, SPACING, BORDER_RADIUS } from '../constants';
-import { AlcoholRecord } from '../types';
+import { AlcoholRecord, AlcoholCategory } from '../types';
 import { StorageService } from '../services/storage';
 import { AddRecordScreen } from './AddRecordScreen';
 import { EditRecordScreen } from './EditRecordScreen';
+import { SearchBar } from '../components/SearchBar';
+import { FilterChips } from '../components/FilterChips';
 
 export const HomeTabScreen: React.FC = () => {
   const [records, setRecords] = useState<AlcoholRecord[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<AlcoholRecord | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState<AlcoholCategory[]>([]);
+  const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
 
   useEffect(() => {
     loadRecords();
@@ -54,6 +59,49 @@ export const HomeTabScreen: React.FC = () => {
     loadRecords();
   };
 
+  const handleCategoryToggle = (category: AlcoholCategory) => {
+    setSelectedCategories(prev =>
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    );
+  };
+
+  const handleRatingToggle = (rating: number) => {
+    setSelectedRatings(prev =>
+      prev.includes(rating)
+        ? prev.filter(r => r !== rating)
+        : [...prev, rating]
+    );
+  };
+
+  const handleClearFilters = () => {
+    setSearchQuery('');
+    setSelectedCategories([]);
+    setSelectedRatings([]);
+  };
+
+  const filteredRecords = useMemo(() => {
+    return records.filter(record => {
+      // 検索クエリによるフィルタリング
+      if (searchQuery && !record.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+        return false;
+      }
+      
+      // カテゴリによるフィルタリング
+      if (selectedCategories.length > 0 && !selectedCategories.includes(record.category)) {
+        return false;
+      }
+      
+      // 評価によるフィルタリング
+      if (selectedRatings.length > 0 && !selectedRatings.includes(record.rating)) {
+        return false;
+      }
+      
+      return true;
+    });
+  }, [records, searchQuery, selectedCategories, selectedRatings]);
+
   const renderRecord = ({ item }: { item: AlcoholRecord }) => (
     <TouchableOpacity style={styles.recordCard} onPress={() => handleEditRecord(item)}>
       <View style={styles.recordHeader}>
@@ -83,15 +131,36 @@ export const HomeTabScreen: React.FC = () => {
         <Text style={styles.title}>酒日記</Text>
       </View>
 
+      <SearchBar
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
+
+      <FilterChips
+        selectedCategories={selectedCategories}
+        selectedRatings={selectedRatings}
+        onCategoryToggle={handleCategoryToggle}
+        onRatingToggle={handleRatingToggle}
+        onClearFilters={handleClearFilters}
+      />
+
       <FlatList
-        data={records}
+        data={filteredRecords}
         renderItem={renderRecord}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>まだ記録がありません</Text>
-            <Text style={styles.emptySubText}>最初の記録を追加してみましょう</Text>
+            <Text style={styles.emptyText}>
+              {filteredRecords.length === 0 && records.length > 0
+                ? '検索条件に一致する記録がありません'
+                : 'まだ記録がありません'}
+            </Text>
+            <Text style={styles.emptySubText}>
+              {filteredRecords.length === 0 && records.length > 0
+                ? 'フィルターを変更してみてください'
+                : '最初の記録を追加してみましょう'}
+            </Text>
           </View>
         }
       />
