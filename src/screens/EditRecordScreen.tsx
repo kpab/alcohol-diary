@@ -9,6 +9,7 @@ import {
   Alert,
   Platform,
   KeyboardAvoidingView,
+  Animated,
 } from 'react-native';
 import { COLORS, SPACING, BORDER_RADIUS } from '../constants';
 import { AlcoholCategory, AlcoholRecord } from '../types';
@@ -37,6 +38,8 @@ export const EditRecordScreen: React.FC<EditRecordScreenProps> = ({
   const [store, setStore] = useState(record.store || '');
   const [memo, setMemo] = useState(record.memo || '');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [deleteButtonScale] = useState(new Animated.Value(1));
+  const [saveButtonScale] = useState(new Animated.Value(1));
 
   const categories = Object.values(AlcoholCategory);
 
@@ -244,12 +247,34 @@ export const EditRecordScreen: React.FC<EditRecordScreenProps> = ({
       </ScrollView>
       
       <View style={styles.bottomActions}>
-        <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-          <Text style={styles.deleteButtonText}>削除</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.saveButtonText}>保存</Text>
-        </TouchableOpacity>
+        <Animated.View style={{ flex: 1, transform: [{ scale: deleteButtonScale }] }}>
+          <TouchableOpacity 
+            style={styles.deleteButton} 
+            onPress={() => {
+              Animated.sequence([
+                Animated.timing(deleteButtonScale, { toValue: 0.95, duration: 100, useNativeDriver: true }),
+                Animated.timing(deleteButtonScale, { toValue: 1, duration: 100, useNativeDriver: true }),
+              ]).start();
+              setTimeout(handleDelete, 150);
+            }}
+          >
+            <Text style={styles.deleteButtonText}>削除</Text>
+          </TouchableOpacity>
+        </Animated.View>
+        <Animated.View style={{ flex: 1, transform: [{ scale: saveButtonScale }] }}>
+          <TouchableOpacity 
+            style={styles.saveButton} 
+            onPress={() => {
+              Animated.sequence([
+                Animated.timing(saveButtonScale, { toValue: 0.95, duration: 100, useNativeDriver: true }),
+                Animated.timing(saveButtonScale, { toValue: 1, duration: 100, useNativeDriver: true }),
+              ]).start();
+              setTimeout(handleSave, 100);
+            }}
+          >
+            <Text style={styles.saveButtonText}>保存</Text>
+          </TouchableOpacity>
+        </Animated.View>
       </View>
     </KeyboardAvoidingView>
   );

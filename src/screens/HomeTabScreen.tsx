@@ -6,6 +6,8 @@ import {
   FlatList,
   TouchableOpacity,
   Modal,
+  Animated,
+  Pressable,
 } from 'react-native';
 import { COLORS, SPACING, BORDER_RADIUS, SHADOWS, FONTS } from '../constants';
 import { AlcoholRecord, AlcoholCategory } from '../types';
@@ -31,6 +33,7 @@ export const HomeTabScreen: React.FC = () => {
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
   const [selectedDate, setSelectedDate] = useState<string | undefined>();
   const [isPremium, setIsPremium] = useState(false);
+  const [fabScale] = useState(new Animated.Value(1));
 
   useEffect(() => {
     loadRecords();
@@ -48,6 +51,20 @@ export const HomeTabScreen: React.FC = () => {
   };
 
   const handleAddRecord = () => {
+    // FAB アニメーション
+    Animated.sequence([
+      Animated.timing(fabScale, {
+        toValue: 0.9,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fabScale, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+    
     setShowAddModal(true);
   };
 
@@ -139,27 +156,58 @@ export const HomeTabScreen: React.FC = () => {
     });
   }, [records, searchQuery, selectedCategories, selectedRatings, selectedDate]);
 
+  const RecordCard = ({ item }: { item: AlcoholRecord }) => {
+    const [cardScale] = useState(new Animated.Value(1));
+    
+    const animateCard = () => {
+      Animated.sequence([
+        Animated.timing(cardScale, {
+          toValue: 0.98,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.timing(cardScale, {
+          toValue: 1,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    };
+
+    return (
+      <Animated.View style={{ transform: [{ scale: cardScale }] }}>
+        <TouchableOpacity 
+          style={styles.recordCard} 
+          onPress={() => {
+            animateCard();
+            setTimeout(() => handleEditRecord(item), 150);
+          }}
+        >
+          <View style={styles.recordHeader}>
+            <Text style={styles.recordDate}>
+              {item.date.toLocaleDateString('ja-JP', { 
+                month: 'numeric', 
+                day: 'numeric' 
+              })}
+            </Text>
+            <View style={styles.categoryBadge}>
+              <Text style={styles.categoryText}>{item.category}</Text>
+            </View>
+          </View>
+          
+          <Text style={styles.recordName}>{item.name}</Text>
+          
+          <View style={styles.recordFooter}>
+            <Text style={styles.rating}>{'★'.repeat(item.rating)}</Text>
+            {item.store && <Text style={styles.store}>{item.store}</Text>}
+          </View>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
+
   const renderRecord = ({ item }: { item: AlcoholRecord }) => (
-    <TouchableOpacity style={styles.recordCard} onPress={() => handleEditRecord(item)}>
-      <View style={styles.recordHeader}>
-        <Text style={styles.recordDate}>
-          {item.date.toLocaleDateString('ja-JP', { 
-            month: 'numeric', 
-            day: 'numeric' 
-          })}
-        </Text>
-        <View style={styles.categoryBadge}>
-          <Text style={styles.categoryText}>{item.category}</Text>
-        </View>
-      </View>
-      
-      <Text style={styles.recordName}>{item.name}</Text>
-      
-      <View style={styles.recordFooter}>
-        <Text style={styles.rating}>{'★'.repeat(item.rating)}</Text>
-        {item.store && <Text style={styles.store}>{item.store}</Text>}
-      </View>
-    </TouchableOpacity>
+    <RecordCard item={item} />
   );
 
   return (
@@ -251,9 +299,11 @@ export const HomeTabScreen: React.FC = () => {
 
       {!isPremium && <BannerAd />}
 
-      <TouchableOpacity style={styles.fab} onPress={handleAddRecord}>
-        <Text style={styles.fabText}>+</Text>
-      </TouchableOpacity>
+      <Animated.View style={[styles.fab, { transform: [{ scale: fabScale }] }]}>
+        <TouchableOpacity style={styles.fabButton} onPress={handleAddRecord}>
+          <Text style={styles.fabText}>+</Text>
+        </TouchableOpacity>
+      </Animated.View>
 
       <Modal
         visible={showAddModal}
@@ -375,6 +425,10 @@ const styles = StyleSheet.create({
     bottom: 120,
     width: 56,
     height: 56,
+  },
+  fabButton: {
+    width: '100%',
+    height: '100%',
     borderRadius: 28,
     backgroundColor: COLORS.primary,
     justifyContent: 'center',
