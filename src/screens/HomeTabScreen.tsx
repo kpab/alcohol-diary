@@ -14,6 +14,9 @@ import { AddRecordScreen } from './AddRecordScreen';
 import { EditRecordScreen } from './EditRecordScreen';
 import { SearchBar } from '../components/SearchBar';
 import { FilterChips } from '../components/FilterChips';
+import { CalendarView } from '../components/CalendarView';
+import { SegmentedButtons } from 'react-native-paper';
+import { ScrollView } from 'react-native';
 
 export const HomeTabScreen: React.FC = () => {
   const [records, setRecords] = useState<AlcoholRecord[]>([]);
@@ -23,6 +26,8 @@ export const HomeTabScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<AlcoholCategory[]>([]);
   const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
+  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
+  const [selectedDate, setSelectedDate] = useState<string | undefined>();
 
   useEffect(() => {
     loadRecords();
@@ -81,8 +86,21 @@ export const HomeTabScreen: React.FC = () => {
     setSelectedRatings([]);
   };
 
+  const handleDayPress = (date: string) => {
+    setSelectedDate(date);
+    setViewMode('list');
+  };
+
   const filteredRecords = useMemo(() => {
     return records.filter(record => {
+      // 日付によるフィルタリング（カレンダーから選択された場合）
+      if (selectedDate) {
+        const recordDate = record.date.toISOString().split('T')[0];
+        if (recordDate !== selectedDate) {
+          return false;
+        }
+      }
+      
       // 検索クエリによるフィルタリング
       if (searchQuery && !record.name.toLowerCase().includes(searchQuery.toLowerCase())) {
         return false;
@@ -100,7 +118,7 @@ export const HomeTabScreen: React.FC = () => {
       
       return true;
     });
-  }, [records, searchQuery, selectedCategories, selectedRatings]);
+  }, [records, searchQuery, selectedCategories, selectedRatings, selectedDate]);
 
   const renderRecord = ({ item }: { item: AlcoholRecord }) => (
     <TouchableOpacity style={styles.recordCard} onPress={() => handleEditRecord(item)}>
@@ -131,21 +149,58 @@ export const HomeTabScreen: React.FC = () => {
         <Text style={styles.title}>酒日記</Text>
       </View>
 
-      <SearchBar
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-      />
+      <View style={styles.viewModeContainer}>
+        <SegmentedButtons
+          value={viewMode}
+          onValueChange={value => setViewMode(value as 'list' | 'calendar')}
+          buttons={[
+            {
+              value: 'list',
+              label: 'リスト',
+              icon: 'format-list-bulleted',
+            },
+            {
+              value: 'calendar',
+              label: 'カレンダー',
+              icon: 'calendar',
+            },
+          ]}
+          style={styles.segmentedButtons}
+        />
+      </View>
 
-      <FilterChips
-        selectedCategories={selectedCategories}
-        selectedRatings={selectedRatings}
-        onCategoryToggle={handleCategoryToggle}
-        onRatingToggle={handleRatingToggle}
-        onClearFilters={handleClearFilters}
-      />
+      {viewMode === 'list' ? (
+        <>
+          <SearchBar
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
 
-      <FlatList
-        data={filteredRecords}
+          <FilterChips
+            selectedCategories={selectedCategories}
+            selectedRatings={selectedRatings}
+            onCategoryToggle={handleCategoryToggle}
+            onRatingToggle={handleRatingToggle}
+            onClearFilters={handleClearFilters}
+          />
+
+          {selectedDate && (
+            <View style={styles.selectedDateContainer}>
+              <Text style={styles.selectedDateText}>
+                {new Date(selectedDate).toLocaleDateString('ja-JP', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}の記録
+              </Text>
+              <TouchableOpacity onPress={() => setSelectedDate(undefined)}>
+                <Text style={styles.clearDateText}>クリア</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          <FlatList
+            data={filteredRecords}
         renderItem={renderRecord}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
@@ -164,6 +219,16 @@ export const HomeTabScreen: React.FC = () => {
           </View>
         }
       />
+        </>
+      ) : (
+        <ScrollView style={styles.calendarScrollView}>
+          <CalendarView
+            records={records}
+            onDayPress={handleDayPress}
+            selectedDate={selectedDate}
+          />
+        </ScrollView>
+      )}
 
       <TouchableOpacity style={styles.fab} onPress={handleAddRecord}>
         <Text style={styles.fabText}>+</Text>
@@ -300,5 +365,36 @@ const styles = StyleSheet.create({
   fabText: {
     fontSize: 24,
     color: COLORS.background,
+  },
+  viewModeContainer: {
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+  },
+  segmentedButtons: {
+    backgroundColor: COLORS.surface,
+  },
+  selectedDateContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    backgroundColor: COLORS.secondary + '20',
+    marginHorizontal: SPACING.md,
+    marginBottom: SPACING.sm,
+    borderRadius: BORDER_RADIUS.md,
+  },
+  selectedDateText: {
+    fontSize: 14,
+    color: COLORS.text,
+    fontWeight: 'bold',
+  },
+  clearDateText: {
+    fontSize: 14,
+    color: COLORS.primary,
+    fontWeight: 'bold',
+  },
+  calendarScrollView: {
+    flex: 1,
   },
 });
