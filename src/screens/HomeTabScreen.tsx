@@ -15,6 +15,8 @@ import { EditRecordScreen } from './EditRecordScreen';
 import { SearchBar } from '../components/SearchBar';
 import { FilterChips } from '../components/FilterChips';
 import { CalendarView } from '../components/CalendarView';
+import { BannerAd } from '../components/BannerAd';
+import { AdService } from '../services/adService';
 import { SegmentedButtons } from 'react-native-paper';
 import { ScrollView } from 'react-native';
 
@@ -28,10 +30,17 @@ export const HomeTabScreen: React.FC = () => {
   const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
   const [selectedDate, setSelectedDate] = useState<string | undefined>();
+  const [isPremium, setIsPremium] = useState(false);
 
   useEffect(() => {
     loadRecords();
+    loadPremiumStatus();
   }, []);
+
+  const loadPremiumStatus = async () => {
+    const status = await StorageService.getPremiumStatus();
+    setIsPremium(status);
+  };
 
   const loadRecords = async () => {
     const loadedRecords = await StorageService.getAllRecords();
@@ -42,9 +51,14 @@ export const HomeTabScreen: React.FC = () => {
     setShowAddModal(true);
   };
 
-  const handleSaveRecord = () => {
+  const handleSaveRecord = async () => {
     setShowAddModal(false);
     loadRecords();
+    
+    // プレミアムでない場合、インタースティシャル広告を表示する可能性
+    if (!isPremium) {
+      await AdService.maybeShowInterstitialAd();
+    }
   };
 
   const handleEditRecord = (record: AlcoholRecord) => {
@@ -52,10 +66,15 @@ export const HomeTabScreen: React.FC = () => {
     setShowEditModal(true);
   };
 
-  const handleUpdateRecord = () => {
+  const handleUpdateRecord = async () => {
     setShowEditModal(false);
     setSelectedRecord(null);
     loadRecords();
+    
+    // プレミアムでない場合、インタースティシャル広告を表示する可能性
+    if (!isPremium) {
+      await AdService.maybeShowInterstitialAd();
+    }
   };
 
   const handleDeleteRecord = () => {
@@ -229,6 +248,8 @@ export const HomeTabScreen: React.FC = () => {
           />
         </ScrollView>
       )}
+
+      {!isPremium && <BannerAd />}
 
       <TouchableOpacity style={styles.fab} onPress={handleAddRecord}>
         <Text style={styles.fabText}>+</Text>

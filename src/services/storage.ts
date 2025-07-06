@@ -104,4 +104,29 @@ export class StorageService {
       throw error;
     }
   }
+
+  static async setPremiumStatus(isPremium: boolean): Promise<void> {
+    try {
+      const settings = await this.getSettings();
+      const updatedSettings: UserSettings = {
+        ...settings,
+        isPremium,
+        premiumPurchaseDate: isPremium ? new Date() : undefined,
+      };
+      await this.saveSettings(updatedSettings);
+    } catch (error) {
+      console.error('Error updating premium status:', error);
+      throw error;
+    }
+  }
+
+  static async getPremiumStatus(): Promise<boolean> {
+    try {
+      const settings = await this.getSettings();
+      return settings.isPremium || false;
+    } catch (error) {
+      console.error('Error getting premium status:', error);
+      return false;
+    }
+  }
 }

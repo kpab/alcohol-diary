@@ -85,25 +85,38 @@ export const EditRecordScreen: React.FC<EditRecordScreenProps> = ({
   };
 
   const handleDelete = () => {
-    Alert.alert(
-      '削除確認',
-      'この記録を削除しますか？',
-      [
-        { text: 'キャンセル', style: 'cancel' },
-        { 
-          text: '削除', 
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await StorageService.deleteRecord(record.id);
-              onDelete();
-            } catch (error) {
-              Alert.alert('エラー', '削除に失敗しました');
-            }
+    if (Platform.OS === 'web') {
+      const confirmed = window.confirm('この記録を削除しますか？');
+      if (confirmed) {
+        performDelete();
+      }
+    } else {
+      Alert.alert(
+        '削除確認',
+        'この記録を削除しますか？',
+        [
+          { text: 'キャンセル', style: 'cancel' },
+          { 
+            text: '削除', 
+            style: 'destructive',
+            onPress: performDelete
           }
-        }
-      ]
-    );
+        ]
+      );
+    }
+  };
+
+  const performDelete = async () => {
+    try {
+      await StorageService.deleteRecord(record.id);
+      onDelete();
+    } catch (error) {
+      if (Platform.OS === 'web') {
+        window.alert('削除に失敗しました');
+      } else {
+        Alert.alert('エラー', '削除に失敗しました');
+      }
+    }
   };
 
   return (

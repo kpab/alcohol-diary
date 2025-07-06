@@ -2,11 +2,11 @@ import React from 'react';
 import { BottomNavigation } from 'react-native-paper';
 import { HomeTabScreen } from '../screens/HomeTabScreen';
 import { StatisticsTabScreen } from '../screens/StatisticsTabScreen';
-import { SettingsTabScreen } from '../screens/SettingsTabScreen';
+import { SettingsScreen } from '../screens/SettingsScreen';
 
 const RecordRoute = () => <HomeTabScreen />;
 const StatsRoute = () => <StatisticsTabScreen />;
-const SettingsRoute = () => <SettingsTabScreen />;
+const SettingsRoute = () => <SettingsScreen />;
 
 export const TabNavigator = () => {
   const [index, setIndex] = React.useState(0);

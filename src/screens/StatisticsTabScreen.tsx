@@ -13,14 +13,22 @@ import { StorageService } from '../services/storage';
 import { StatisticsCard } from '../components/StatisticsCard';
 import { CategoryChart } from '../components/CategoryChart';
 import { RatingChart } from '../components/RatingChart';
+import { BannerAd } from '../components/BannerAd';
 
 export const StatisticsTabScreen: React.FC = () => {
   const [records, setRecords] = useState<AlcoholRecord[]>([]);
   const [selectedPeriod, setSelectedPeriod] = useState<'all' | 'month' | 'week'>('all');
+  const [isPremium, setIsPremium] = useState(false);
 
   useEffect(() => {
     loadRecords();
+    loadPremiumStatus();
   }, []);
+
+  const loadPremiumStatus = async () => {
+    const status = await StorageService.getPremiumStatus();
+    setIsPremium(status);
+  };
 
   const loadRecords = async () => {
     const allRecords = await StorageService.getAllRecords();
@@ -177,6 +185,8 @@ export const StatisticsTabScreen: React.FC = () => {
 
         <View style={styles.bottomSpace} />
       </ScrollView>
+      
+      {!isPremium && <BannerAd />}
     </View>
   );
 };
