@@ -14,6 +14,8 @@ import { COLORS, SPACING, BORDER_RADIUS } from '../constants';
 import { AlcoholCategory, AlcoholRecord } from '../types';
 import { StorageService } from '../services/storage';
 import { DatePicker } from '../components/DatePicker';
+import { validateRecord } from '../validation/recordSchema';
+import { ErrorText } from '../components/ErrorText';
 
 interface EditRecordScreenProps {
   record: AlcoholRecord;
@@ -34,14 +36,34 @@ export const EditRecordScreen: React.FC<EditRecordScreenProps> = ({
   const [rating, setRating] = useState(record.rating);
   const [store, setStore] = useState(record.store || '');
   const [memo, setMemo] = useState(record.memo || '');
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const categories = Object.values(AlcoholCategory);
 
   const handleSave = async () => {
-    if (!name.trim()) {
-      Alert.alert('エラー', 'お酒の名前を入力してください');
+    const formData = {
+      date,
+      category,
+      name: name.trim(),
+      rating,
+      store: store.trim() || undefined,
+      memo: memo.trim() || undefined,
+    };
+
+    const validation = validateRecord(formData);
+    
+    if (!validation.success) {
+      const newErrors: Record<string, string> = {};
+      validation.error.errors.forEach((error) => {
+        if (error.path.length > 0) {
+          newErrors[error.path[0] as string] = error.message;
+        }
+      });
+      setErrors(newErrors);
       return;
     }
+
+    setErrors({});
 
     const updatedRecord: AlcoholRecord = {
       ...record,
@@ -137,12 +159,18 @@ export const EditRecordScreen: React.FC<EditRecordScreenProps> = ({
         <View style={styles.section}>
           <Text style={styles.label}>お酒の名前 *</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, errors.name && styles.inputError]}
             value={name}
-            onChangeText={setName}
+            onChangeText={(text) => {
+              setName(text);
+              if (errors.name) {
+                setErrors(prev => ({ ...prev, name: '' }));
+              }
+            }}
             placeholder="例: アサヒスーパードライ"
             placeholderTextColor={COLORS.textSecondary}
           />
+          <ErrorText error={errors.name} />
         </View>
 
         <View style={styles.section}>
@@ -167,25 +195,37 @@ export const EditRecordScreen: React.FC<EditRecordScreenProps> = ({
         <View style={styles.section}>
           <Text style={styles.label}>店舗（任意）</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, errors.store && styles.inputError]}
             value={store}
-            onChangeText={setStore}
+            onChangeText={(text) => {
+              setStore(text);
+              if (errors.store) {
+                setErrors(prev => ({ ...prev, store: '' }));
+              }
+            }}
             placeholder="例: セブンイレブン"
             placeholderTextColor={COLORS.textSecondary}
           />
+          <ErrorText error={errors.store} />
         </View>
 
         <View style={styles.section}>
           <Text style={styles.label}>メモ（任意）</Text>
           <TextInput
-            style={[styles.input, styles.textArea]}
+            style={[styles.input, styles.textArea, errors.memo && styles.inputError]}
             value={memo}
-            onChangeText={setMemo}
+            onChangeText={(text) => {
+              setMemo(text);
+              if (errors.memo) {
+                setErrors(prev => ({ ...prev, memo: '' }));
+              }
+            }}
             placeholder="味の感想など..."
             placeholderTextColor={COLORS.textSecondary}
             multiline
             numberOfLines={4}
           />
+          <ErrorText error={errors.memo} />
         </View>
 
         <View style={styles.deleteSection}>
@@ -311,5 +351,9 @@ const styles = StyleSheet.create({
   },
   bottomSpace: {
     height: 100,
+  },
+  inputError: {
+    borderWidth: 1,
+    borderColor: COLORS.error,
   },
 });
